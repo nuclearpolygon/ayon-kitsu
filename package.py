@@ -1,10 +1,10 @@
 name = "kitsu"
 title = "Kitsu"
-version = "1.2.5+dev"
+version = "1.2.6"
 client_dir = "ayon_kitsu"
 
 services = {
-    "processor": {"image": f"ynput/ayon-kitsu-processor:{version}"},
+    "processor": {"image": f"artifactory.lesta.io:443/vcg-docker/ayon-kitsu-processor:{version}"},
 }
 
 ayon_required_addons = {

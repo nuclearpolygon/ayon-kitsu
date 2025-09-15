@@ -86,28 +86,40 @@ class KitsuProcessor:
 
             email_secret = self.settings.get("login_email")
             password_secret = self.settings.get("login_password")
+            token_secret = self.settings.get("login_token")
 
-            if not email_secret:
-                raise ValueError(f"Email secret `{email_secret}` not set")
+            if not token_secret:
 
-            if not password_secret:
-                raise ValueError(
-                    f"Password secret `{password_secret}` not set"
-                )
+                if not email_secret:
+                    raise ValueError(f"Email secret `{email_secret}` not set")
 
-            try:
-                self.kitsu_login_email = (
-                    ayon_api.get_secret(email_secret)["value"]
-                )
-                self.kitsu_login_password = (
-                    ayon_api.get_secret(password_secret)["value"]
-                )
-            except KeyError as e:
-                raise KitsuSettingsError(f"Secret `{e}` not found") from e
+                if not password_secret:
+                    raise ValueError(
+                        f"Password secret `{password_secret}` not set"
+                    )
 
-            assert self.kitsu_login_password, "Kitsu password not set"
-            assert self.kitsu_server_url, "Kitsu server not set"
-            assert self.kitsu_login_email, "Kitsu email not set"
+                try:
+                    self.kitsu_login_email = (
+                        ayon_api.get_secret(email_secret)["value"]
+                    )
+                    self.kitsu_login_password = (
+                        ayon_api.get_secret(password_secret)["value"]
+                    )
+                except KeyError as e:
+                    raise KitsuSettingsError(f"Secret `{e}` not found") from e
+
+                assert self.kitsu_login_password, "Kitsu password not set"
+                assert self.kitsu_server_url, "Kitsu server not set"
+                assert self.kitsu_login_email, "Kitsu email not set"
+            else:
+                try:
+                    self.kitsu_login_token = ayon_api.get_secret(token_secret)["value"]
+                except KeyError as e:
+                    raise KitsuSettingsError(f"Secret `{e}` not found") from e
+
+                assert self.kitsu_login_token, "Kitsu token not set"
+                assert self.kitsu_server_url, "Kitsu server not set"
+
         except AssertionError as e:
             logging.error(f"KitsuProcessor failed to initialize: {e}")
             raise KitsuSettingsError() from e
@@ -122,8 +134,12 @@ class KitsuProcessor:
             )
 
         try:
-            gazu.log_in(self.kitsu_login_email, self.kitsu_login_password)
-            logging.info(f"Gazu logged in as {self.kitsu_login_email}")
+            if self.kitsu_login_token:
+                gazu.set_token(self.kitsu_login_token)
+                logging.info(f"Gazu logged in via access token")
+            else:
+                gazu.log_in(self.kitsu_login_email, self.kitsu_login_password)
+                logging.info(f"Gazu logged in as {self.kitsu_login_email}")
         except gazu.exception.AuthFailedException as e:
             raise KitsuServerError(f"Kitsu login failed: {e}") from e
 

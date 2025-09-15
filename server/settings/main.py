@@ -35,6 +35,21 @@ class KitsuSettings(BaseSettingsModel):
         title="Kitsu user password",
         scope=["studio"],
     )
+
+    login_token: str | None = SettingsField(
+        "kitsu_token",
+        enum_resolver=secrets_enum,
+        title="Kitsu Access Token",
+        scope=["studio"],
+    )
+
+    #
+    ## Sub entities
+    #
+    entities_naming_pattern: EntityPattern = SettingsField(
+        default_factory=EntityPattern,
+        title="Entities naming pattern",
+    )
     publish: PublishPlugins = SettingsField(
         default_factory=PublishPlugins,
         title="Publish plugins",
@@ -46,6 +61,11 @@ class KitsuSettings(BaseSettingsModel):
 
 
 DEFAULT_VALUES = {
+    "entities_naming_pattern": {
+        "episode": "E##",
+        "sequence": "SQ##",
+        "shot": "SH##",
+    },
     "publish": PUBLISH_DEFAULT_VALUES,
     "sync_settings": SYNC_DEFAULT_VALUES,
 }

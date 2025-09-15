@@ -126,11 +126,13 @@ class KitsuAddon(BaseServerAddon):
 
         actual_email = await Secrets.get(settings.login_email)
         actual_password = await Secrets.get(settings.login_password)
+        actual_token = await Secrets.get(settings.login_token)
 
-        if not actual_email:
-            raise InvalidSettingsException("Kitsu email secret is not set")
+        if not actual_token:
+            if not actual_email:
+                raise InvalidSettingsException("Kitsu email secret is not set")
 
-        if not actual_password:
-            raise InvalidSettingsException("Kitsu password secret is not set")
+            if not actual_password:
+                raise InvalidSettingsException("Kitsu password secret is not set")
 
         self.kitsu = Kitsu(settings.server, actual_email, actual_password)

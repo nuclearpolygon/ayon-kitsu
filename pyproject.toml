@@ -5,15 +5,15 @@
 
 [tool.poetry]
 name = "ayon-kitsu"
-version = "1.2.4-dev.1"
+version = "1.2.6"
 description = ""
 authors = ["Ynput Team <team@ynput.io>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-gazu = "^0.9.3"
+gazu = "^0.10.23"
 ayon-python-api = "^1.0.1"
 pyblish = "^1.7.0"
 qtpy = "^2.4.1"
