@@ -441,7 +441,10 @@ async def sync_folder(
             name=entity_dict["name"],
             folder_type=entity_dict["type"],
             parent_id=parent_id,
-            data={"kitsuId": entity_dict["id"]},
+            data={
+                "kitsuId": entity_dict["id"],
+                **entity_dict.get("custom_data", {}),
+            },
         )
         existing_folders[entity_dict["id"]] = target_folder.id
 
@@ -455,6 +458,7 @@ async def sync_folder(
             attrib=parse_attrib(data),
             name=entity_dict["name"],
             folder_type=entity_dict["type"],
+            data=entity_dict.get("custom_data", {})
         )
         if changed:
             logging.info(

@@ -156,6 +156,11 @@ async def update_folder(
             if key not in folder.own_attrib:
                 folder.own_attrib.append(key)
             changed = True
+
+    for key, value in payload["data"].items():
+        if folder.data.get(key) != value:
+            folder.data[key] = value
+            changed = True
     if changed:
         await folder.save()
         event = {
