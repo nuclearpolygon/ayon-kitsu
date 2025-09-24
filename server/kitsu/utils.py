@@ -38,7 +38,7 @@ def calculate_end_frame(
 
 def create_name_and_label(kitsu_name: str) -> dict[str, str]:
     """From a name coming from kitsu, create a name and label"""
-    name_slug = slugify(kitsu_name, separator="_")
+    name_slug = slugify(kitsu_name, separator="_", lower=False)
     return {"name": name_slug, "label": kitsu_name}
 
 
