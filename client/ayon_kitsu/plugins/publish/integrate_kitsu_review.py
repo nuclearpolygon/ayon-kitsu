@@ -43,11 +43,12 @@ class IntegrateKitsuReview(KitsuPublishInstancePlugin):
             )
             self.log.debug(f"Found review at: {review_path}")
 
-            gazu.task.add_preview(
+            preview = gazu.task.add_preview(
                 task=task_id,
                 comment=comment_id,
                 preview_file_path=review_path,
                 normalize_movie=True,
                 revision=instance.data["version"],
             )
+            gazu.task.set_main_preview(preview)
             self.log.info("Review upload on comment")
