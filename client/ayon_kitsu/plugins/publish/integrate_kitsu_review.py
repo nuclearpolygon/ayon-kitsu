@@ -3,6 +3,7 @@ import gazu
 import pyblish.api
 
 from ayon_kitsu.pipeline import KitsuPublishInstancePlugin
+from ayon_core.pipeline.publish import get_publish_repre_path
 
 
 class IntegrateKitsuReview(KitsuPublishInstancePlugin):
@@ -37,7 +38,9 @@ class IntegrateKitsuReview(KitsuPublishInstancePlugin):
                     "because it has no 'kitsureview' tag"
                 )
                 continue
-            review_path = representation.get("published_path")
+            review_path = get_publish_repre_path(
+                instance, representation, False
+            )
             self.log.debug(f"Found review at: {review_path}")
 
             gazu.task.add_preview(
