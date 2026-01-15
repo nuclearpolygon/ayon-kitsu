@@ -20,3 +20,4 @@ dist/
 
 # Pyenv
 .python-version
+package-lock.json
