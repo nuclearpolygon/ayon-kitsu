@@ -4,11 +4,11 @@ import ayon_api
 import gazu
 
 
-def get_asset_types(kitsu_project_id: str) -> dict[str, str]:
+def get_asset_types(kitsu_project_id: str) -> dict[str, dict[str, str]]:
     raw_asset_types = gazu.asset.all_asset_types_for_project(kitsu_project_id)
     kitsu_asset_types = {}
     for asset_type in raw_asset_types:
-        kitsu_asset_types[asset_type["id"]] = asset_type["name"]
+        kitsu_asset_types[asset_type["id"]] = {'name': asset_type["name"], 'short_name': asset_type["short_name"]}
     return kitsu_asset_types
 
 
@@ -37,7 +37,8 @@ def preprocess_asset(
         asset_types = get_asset_types(kitsu_project_id)
 
     if "entity_type_id" in asset and asset["entity_type_id"] in asset_types:
-        asset["asset_type_name"] = asset_types[asset["entity_type_id"]]
+        asset["asset_type_name"] = asset_types[asset["entity_type_id"]]['name']
+        asset["asset_type_short_name"] = asset_types[asset["entity_type_id"]]['short_name']
     return asset
 
 

@@ -70,6 +70,7 @@ async def get_root_folder_id(
     kitsu_type_id: str,
     subfolder_id: str | None = None,
     subfolder_name: str | None = None,
+    subfolder_label: str | None = None,
 ) -> str:
     """
     Get the root folder ID for a given Kitsu type and ID.
@@ -109,7 +110,8 @@ async def get_root_folder_id(
     else:
         sub_folder = await create_folder(
             project_name=project_name,
-            name=subfolder_name,
+            name=subfolder_label,
+            short_name=subfolder_name,
             parent_id=id,
             data={"kitsuId": subfolder_id},
         )
@@ -385,7 +387,8 @@ async def sync_folder(
                     kitsu_type="Assets",
                     kitsu_type_id="asset",
                     subfolder_id=entity_dict["entity_type_id"],
-                    subfolder_name=entity_dict["asset_type_name"],
+                    subfolder_name=entity_dict["asset_type_short_name"],
+                    subfolder_label=entity_dict["asset_type_name"],
                 )
                 existing_folders[entity_dict["entity_type_id"]] = parent_id
         elif entity_dict["type"] in get_args(KitsuEntityType):

@@ -36,9 +36,11 @@ def calculate_end_frame(
             return int(frame_start) + int(entity_dict["nb_frames"]) - 1
 
 
-def create_name_and_label(kitsu_name: str) -> dict[str, str]:
+def create_name_and_label(kitsu_name: str, short_name: str = None) -> dict[str, str]:
     """From a name coming from kitsu, create a name and label"""
     name_slug = slugify(kitsu_name, separator="_", lower=False)
+    if short_name:
+        name_slug = short_name
     return {"name": name_slug, "label": kitsu_name}
 
 
@@ -109,6 +111,7 @@ async def get_task_by_kitsu_id(
 async def create_folder(
     project_name: str,
     name: str,
+    short_name: str = None,
     **kwargs,
 ) -> FolderEntity:
     """
@@ -116,7 +119,7 @@ async def create_folder(
     require background tasks. Maybe just use the similar function from
     api.folders.folders.py?
     """
-    payload = {**kwargs, **create_name_and_label(name)}
+    payload = {**kwargs, **create_name_and_label(name, short_name)}
 
     folder = FolderEntity(
         project_name=project_name,
@@ -138,12 +141,13 @@ async def update_folder(
     project_name: str,
     folder_id: str,
     name: str,
+    short_name: str = None,
     **kwargs,
 ) -> bool:
     folder = await FolderEntity.load(project_name, folder_id)
     changed = False
 
-    payload: dict[str, Any] = {**kwargs, **create_name_and_label(name)}
+    payload: dict[str, Any] = {**kwargs, **create_name_and_label(name, short_name)}
 
     for key in ["name", "label"]:
         if key in payload and getattr(folder, key) != payload[key]:
