@@ -7,7 +7,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
-gazu = "^0.10.23"
+gazu = "^1.1.6"
 nxtools = "^1.6"
 ayon-python-api = "^1.2.1"
 
