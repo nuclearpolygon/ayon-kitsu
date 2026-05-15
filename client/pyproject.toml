@@ -1,2 +1,2 @@
 [tool.poetry.dependencies]
-gazu = "^0.10.23"
+gazu = "^1.1.6"
