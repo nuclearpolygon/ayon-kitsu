@@ -4,7 +4,7 @@ AYON_ADDON_VERSION=$(shell python -c "import os;import sys;content={};f=open('$(
 AYON_ADDON_NAME=kitsu
 SERVICE_NAME=processor
 BASE_NAME := ayon-$(AYON_ADDON_NAME)-$(SERVICE_NAME)
-IMAGE := ynput/$(BASE_NAME):$(AYON_ADDON_VERSION)
+IMAGE := artifactory.lesta.io:443/vcg-docker/$(BASE_NAME):$(AYON_ADDON_VERSION)
 default:
 	@echo * *************************
 	@echo * AYON Kitsu $(AYON_ADDON_VERSION) $(SERVICE_NAME) Service Builder

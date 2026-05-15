@@ -45,9 +45,18 @@ def delete_project(parent: "KitsuProcessor", data: dict[str, str]):
         entities=[entity],
     )
 
+def get_entity_data(entity_id: str):
+    entity = gazu.entity.get_entity(entity_id)
+    custom_data = entity.get("data")
+    entity_type = gazu.entity.get_entity_type(entity["entity_type_id"])
+    custom_data['entity_type'] = entity_type["name"]
+    custom_data['entity_type_short'] = entity_type["short_name"]
+    return custom_data
+
 
 def create_or_update_asset(parent: "KitsuProcessor", data: dict[str, str]):
     logging.info(f"create_or_update_asset: {data}")
+    custom_data = get_entity_data(data["asset_id"])
     project_name = parent.get_paired_ayon_project(data["project_id"])
     if not project_name:
         return  # do nothing as this kitsu and ayon project are not paired
@@ -58,6 +67,7 @@ def create_or_update_asset(parent: "KitsuProcessor", data: dict[str, str]):
 
     # Add ayon base url so we can use it in REST calls later on
     entity["ayon_server_url"] = ayon_api.get_base_url()
+    entity["custom_data"] = custom_data
 
     return ayon_api.post(
         f"{parent.entrypoint}/push",

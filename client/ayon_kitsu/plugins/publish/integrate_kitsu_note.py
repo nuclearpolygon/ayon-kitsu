@@ -1,10 +1,34 @@
 # -*- coding: utf-8 -*-
+import json
 import re
 
 import gazu
 import pyblish.api
 
 from ayon_kitsu.pipeline import KitsuPublishContextPlugin
+from ayon_core.pipeline import Anatomy
+
+
+class MDEncoder(json.JSONEncoder):
+    def encode(self, obj):
+        if isinstance(obj, dict):
+            encoded_text = ''
+            for key, value in obj.items():
+                if isinstance(key, (str, int, float, bool, type(None))):
+                    encoded_key = f'{key}'
+                else:
+                    encoded_key = self.encode(key)
+
+                encoded_value = self.encode(value)
+                encoded_text += f"{encoded_key}:  \n{encoded_value}\n\n"
+            return encoded_text
+        elif isinstance(obj, list):
+            return '  \n'.join([f'`{item}`  ' for item in obj])
+        else:
+            return super().encode(obj)
+
+    def default(self, obj):
+        return super().default(obj)
 
 
 class IntegrateKitsuNote(KitsuPublishContextPlugin):
@@ -28,6 +52,10 @@ class IntegrateKitsuNote(KitsuPublishContextPlugin):
         "comment_template": "{comment}",
     }
 
+    def format_json(self, data):
+        return json.dumps(data, cls=MDEncoder)
+
+
     def format_publish_comment(self, instance):
         """Format the instance's publish comment
 
@@ -44,6 +72,8 @@ class IntegrateKitsuNote(KitsuPublishContextPlugin):
                     "in the comment".format(key)
                 )
                 return ""
+            elif not isinstance(instance.data[key], str):
+                return self.format_json(instance.data[key])
             else:
                 return str(instance.data[key])
 
@@ -119,7 +149,24 @@ class IntegrateKitsuNote(KitsuPublishContextPlugin):
                         " The status will not be changed!"
                     )
 
-            # Get comment text body
+            published_representations = {}
+            anatomy = Anatomy(instance.data['projectEntity']['name'])
+            for scene_instance in instance.context:
+                for attached_id in (instance.data['publish_attributes']
+                        .get('AttachReviewables', {}).get('attach')):
+                    if attached_id != scene_instance.data['instance_id']:
+                        continue
+                    for _repr in scene_instance.data['published_representations'].values():
+                        repr_name = _repr["representation"]["name"]
+                        if repr_name in ('thumbnail', ):
+                            continue
+                        repr_file = _repr["representation"]["attrib"]["path"]
+                        published_representations[repr_name] = [
+                            anatomy.path_remapper(repr_file, 'windows'),
+                            anatomy.path_remapper(repr_file, 'linux')
+                        ]
+            self.log.info(published_representations)
+            instance.data['products'] = published_representations
             publish_comment = instance.data.get("comment")
             if self.custom_comment_template["enabled"]:
                 publish_comment = self.format_publish_comment(instance)
