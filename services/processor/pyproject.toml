@@ -1,3 +1,7 @@
+[project]
+name = "kitsu-processor"
+version = "1.2.7"
+
 [tool.poetry]
 name = "kitsu-processor"
 version = "1.2.7"

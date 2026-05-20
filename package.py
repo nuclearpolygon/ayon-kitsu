@@ -4,7 +4,7 @@ version = "1.2.7"
 client_dir = "ayon_kitsu"
 
 services = {
-    "processor": {"image": f"ynput/ayon-kitsu-processor:{version}"},
+    "processor": {"image": f"ghcr.io/nuclearpolygon/ayon-kitsu-processor:{version}"},
 }
 
 ayon_required_addons = {

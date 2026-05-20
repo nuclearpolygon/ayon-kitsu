@@ -388,7 +388,7 @@ async def sync_folder(
                 parent_id = await get_root_folder_id(
                     user=user,
                     project_name=project.name,
-                    kitsu_type="Assets",
+                    kitsu_type="Asset",
                     kitsu_type_id="asset",
                     subfolder_id=entity_dict["entity_type_id"],
                     subfolder_name=entity_dict["asset_type_short_name"],

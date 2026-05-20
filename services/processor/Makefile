@@ -1,10 +1,10 @@
-include .env
+-include .env
 
-AYON_ADDON_VERSION=$(shell python -c "import os;import sys;content={};f=open('$(CURDIR)/../../package.py');exec(f.read(),content);f.close();print(content['version'])")
+AYON_ADDON_VERSION:=$(shell uv version --short)
 AYON_ADDON_NAME=kitsu
 SERVICE_NAME=processor
 BASE_NAME := ayon-$(AYON_ADDON_NAME)-$(SERVICE_NAME)
-IMAGE := artifactory.lesta.io:443/vcg-docker/$(BASE_NAME):$(AYON_ADDON_VERSION)
+IMAGE := ghcr.io/nuclearpolygon/$(BASE_NAME):$(AYON_ADDON_VERSION)
 default:
 	@echo * *************************
 	@echo * AYON Kitsu $(AYON_ADDON_VERSION) $(SERVICE_NAME) Service Builder

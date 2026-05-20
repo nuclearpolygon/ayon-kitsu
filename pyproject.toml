@@ -21,7 +21,12 @@ pydantic = "^2.6.4"
 nxtools = "^1.6"
 python-dotenv = "^1.0.1"
 
+[tool.uv.sources]
+ayon-server = { path = "../ayon-backend" }
+
 [dependency-groups]
 dev = [
-    "ayon-python-api==1.2.14"
+    "ayon-python-api==1.2.14",
+    "ayon-server",
+    "nxtools>=1.6",
 ]
